@@ -1,0 +1,89 @@
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn-primary {
+    background-color: #8B4513 !important;
+    /* Warna coklat kopi */
+    border-color: #8B4513 !important;
+}
+
+.btn-primary:hover {
+    background-color: #6B3310 !important;
+    /* Warna lebih gelap saat hover */
+    border-color: #6B3310 !important;
+}
+
+.order-container {
+    max-width: 768px;
+    margin: 0 auto;
+}
+
+.order-container .header {
+    background: hsla(30, 15%, 64%, 1);
+    background: linear-gradient(360deg, hsla(30, 15%, 64%, 1) 0%, hsla(26, 58%, 23%, 1) 100%) !important;
+    background: -moz-linear-gradient(360deg, hsla(30, 15%, 64%, 1) 0%, hsla(26, 58%, 23%, 1) 100%);
+    background: -webkit-linear-gradient(360deg, hsla(30, 15%, 64%, 1) 0%, hsla(26, 58%, 23%, 1) 100%);
+    filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#B2A496", endColorstr="#5E3719", GradientType=1);
+    height: 130px;
+    width: 100%;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+.order-container .header .d-flex {
+    margin: 0 auto;
+    width: 85%;
+}
+
+.order-container .header .d-flex h2,
+.order-container .header .d-flex h5 {
+    color: white;
+    margin-top: 40px;
+}
+
+.order-container .search-card {
+    margin: 0 auto;
+    width: 83%;
+    border-radius: 30px;
+    margin-top: -30px;
+}
+
+.order-container .search-card input {
+    border: wheat 3px solid;
+    border-radius: 18px;
+}
+
+.order-container .menu-wrapper {
+    margin: 0 auto;
+    width: 83%;
+    margin-top: 30px;
+}
+
+.order-container .menu-wrapper .menu-item img {
+    width: 40%;
+    border-radius: 10px;
+}
+
+.order-container .price-wrapper {
+    position: fixed;
+    /* Tetap di posisi tertentu */
+    bottom: 0;
+    /* Tempel di bawah */
+    left: 0;
+    width: 100%;
+    /* Lebar penuh */
+    background: white;
+    /* Pastikan background ada */
+    box-shadow: 0px -5px 10px rgba(0, 0, 0, 0.1);
+    /* Shadow ke atas */
+    padding: 10px 0;
+    /* Beri padding agar tidak terlalu mepet */
+    z-index: 1000;
+    /* Pastikan tetap di atas elemen lain */
+}
+
+.order-container .price-wrapper .price-content {
+    margin: 0 auto;
+    width: 83%;
+}
