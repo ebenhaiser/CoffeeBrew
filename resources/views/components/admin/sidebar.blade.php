@@ -30,8 +30,8 @@
             </a>
         </li>
 
-        <li class="menu-item {{ request()->routeIs('admin.menu') ? 'active' : '' }}">
-            <a href="{{ route('admin.menu') }}" class="menu-link">
+        <li class="menu-item {{ request()->routeIs('admin.table') ? 'active' : '' }}">
+            <a href="{{ route('admin.table') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-calendar-alt"></i>
                 <div data-i18n="Analytics">Table</div>
             </a>

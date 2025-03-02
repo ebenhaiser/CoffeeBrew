@@ -6,11 +6,11 @@
             <div class="me-auto fw-semibold"></div>
             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
-        <div class="toast-body">{{ session('successToast') }}</div>
+        <div class="toast-body">{!! session('successToast') !!}</div>
     </div>
 @endif
 
-@if ($errors->any())
+{{-- @if ($errors->any())
     @foreach ($errors->all() as $item)
         <div class="bs-toast toast toast-placement-ex m-2 fade bg-danger top-0 start-50 translate-middle-x show"
             role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
@@ -22,4 +22,4 @@
             <div class="toast-body">{{ $item }}</div>
         </div>
     @endforeach
-@endif
+@endif --}}

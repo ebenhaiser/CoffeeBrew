@@ -3,7 +3,7 @@
     <div class="d-flex gap-3 justify-content-between mb-3">
         <input type="text" class="form-control" id="" style="max-width: 350px" placeholder="Search for menus?"
             wire:model.live="keyword">
-        <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMenu">
+        <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addData">
             <i class='bx bx-plus'></i>
         </button>
     </div>
@@ -38,10 +38,12 @@
                         <td>{{ 'Rp.' . $menu->price }}</td>
                         <td>{{ $menu->stock }}</td>
                         <td align="right">
-                            <a href="#" class="btn btn-warning">
+                            <a wire:click="edit({{ $menu->id }})" class="btn btn-warning" data-bs-toggle="modal"
+                                data-bs-target="#addData" style="color: white">
                                 <i class='bx bx-edit'></i>
                             </a>
-                            <a href="#" class="btn btn-danger">
+                            <a wire:click="delete_confirmation({{ $menu->id }})" class="btn btn-danger"
+                                style="color: white" data-bs-toggle="modal" data-bs-target="#deleteData">
                                 <i class='bx bx-trash'></i>
                             </a>
                         </td>
@@ -55,12 +57,16 @@
     </div>
 
     <!-- Modal add data-->
-    <div class="modal fade" id="addMenu" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+    <div class="modal fade" id="addData" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
         data-bs-backdrop="static" wire:ignore.self>
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add Menu</h1>
+                    @if ($updateData == false)
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Menu</h1>
+                    @else
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Edit '{{ $name }}'</h1>
+                    @endif
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -105,12 +111,18 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Stock</label>
-                            <input type="number" class="form-control" id="name" name="stock"
+                            <input type="text" class="form-control" id="name" name="stock"
                                 placeholder="Insert menu stock" wire:model="stock">
+                            @if ($errors->has('stock'))
+                                <div id="defaultFormControlHelp" class="form-text text-danger">
+                                    {{ $errors->first('stock') }}
+                                </div>
+                            @endif
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Image</label>
-                            <input type="file" class="form-control" name="image" placeholder="Insert menu stock">
+                            <input type="file" class="form-control" name="image"
+                                placeholder="Insert menu stock">
                         </div>
                         <div class="col-md-6 mb-3">
                             <img src="https://placehold.co/400" class="w-100" alt="">
@@ -119,8 +131,34 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" wire:click="store()">Add</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                        wire:click="clear()">Cancel</button>
+                    @if ($updateData == false)
+                        <button type="button" class="btn btn-primary" wire:click="store()">Add</button>
+                    @else
+                        <button type="button" class="btn btn-primary" wire:click="update()">Edit</button>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- modal delete data --}}
+    <div class="modal fade" id="deleteData" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+        wire:ignore.self>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: red">Deleting File</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure want to delete '{{ $deletingName }}'?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                        wire:click="clear()">Cancel</button>
+                    <button type="button" class="btn btn-danger" wire:click="delete()">Delete</button>
                 </div>
             </div>
         </div>

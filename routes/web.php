@@ -8,3 +8,4 @@ Route::get('/order', function () {
 });
 Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
 Route::get('/admin/menu', [AdminController::class, 'menus'])->name('admin.menu');
+Route::get('/admin/table', [AdminController::class, 'tables'])->name('admin.table');

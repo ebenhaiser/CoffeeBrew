@@ -6,11 +6,13 @@ use App\Models\Menu;
 use Livewire\Component;
 use App\Models\Category;
 use Livewire\WithPagination;
+use Illuminate\Validation\Rule;
 
 class AdminMenu extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
+    public $menuId;
     public $name;
     public $category_id;
     public $description;
@@ -20,9 +22,8 @@ class AdminMenu extends Component
     public $keyword;
     public $sortColumn = 'name';
     public $sortDirection = 'asc';
-    // public $addError = [];
-    public $validateNewData = false;
-    public $addNewData = false;
+    public $updateData = false;
+    public $deletingName;
 
     public function sort($columnName)
     {
@@ -51,14 +52,25 @@ class AdminMenu extends Component
 
     public function validateAdd()
     {
-        $this->validate([
-            'name' => 'required|unique:menus,name',
-            'price' => 'required|numeric',
-            'category_id' => 'nullable|exists:categories,id',
-            'description' => 'nullable|string',
-            'stock' => 'nullable|integer|min:0',
-            'image' => 'nullable|image|max:2048',
-        ]);
+        if ($this->updateData == false) {
+            $this->validate([
+                'name' => 'required|unique:menus,name',
+                'price' => 'required|numeric',
+                'category_id' => 'nullable|exists:categories,id',
+                'description' => 'nullable|string',
+                'stock' => 'nullable|integer|min:0',
+                'image' => 'nullable|image|max:2048',
+            ]);
+        } else {
+            $this->validate([
+                'name' => ['required', Rule::unique('menus', 'name')->ignore($this->menuId)],
+                'price' => 'required|numeric',
+                'category_id' => 'nullable|exists:categories,id',
+                'description' => 'nullable|string',
+                'stock' => 'nullable|integer|min:0',
+                'image' => 'nullable|image|max:2048',
+            ]);
+        }
     }
 
     public function store()
@@ -73,56 +85,68 @@ class AdminMenu extends Component
             'stock' => $this->stock,
         ]);
 
-        session()->flash('successToast', "New Menu '" . $this->name . "' was successfully created");
-        $this->reset(); // Reset input setelah submit
-        // $this->dispatchBrowserEvent('close-modal'); // Event untuk menutup modal
+        session()->flash('successToast', "New Menu '" . $this->name . "' was <span class='badge bg-label-success'>created</span>");
+        $this->reset();
         $this->dispatch('closeAllModals');
     }
 
-    // public function store()
-    // {
-    // $this->dispatch('closeAllModals');
-    // $rules = [
-    //     'name' => 'required',
-    //     'price' => 'required|numeric',
-    //     'category_id' => 'nullable|exists:categories,id',
-    //     'description' => 'nullable|string',
-    //     'stock' => 'nullable|integer|min:0',
-    //     'image' => 'nullable|image|max:2048',
-    // ];
+    public function edit($id)
+    {
+        $menu = Menu::find($id);
+        $this->menuId = $id;
+        $this->name = $menu->name;
+        $this->category_id = $menu->category_id;
+        $this->description = $menu->description;
+        $this->price = $menu->price;
+        $this->stock = $menu->stock;
 
-    // $messages = [
-    //     'name.required' => 'Name is required',
-    //     'price.required' => 'Price is required',
-    //     'price.numeric' => 'Price must be a number',
-    // ];
+        $this->updateData = true;
+    }
 
-    // $validated = $this->validate($rules, $messages);
+    public function update()
+    {
+        $id = $this->menuId;
+        $this->validateAdd(); // Memastikan validasi terjadi sebelum menyimpan
 
-    // Menu::create([
-    //     'name' => $this->name,
-    //     'category_id' => $this->category_id,
-    //     'description' => $this->description,
-    //     'price' => $this->price,
-    //     'stock' => $this->stock ?? 0,
-    //     'image' => $this->image ?? null,
-    // ]);
+        Menu::find($id)->update([
+            'name' => $this->name,
+            'category_id' => $this->category_id,
+            'description' => $this->description,
+            'price' => $this->price,
+            'stock' => $this->stock,
+        ]);
 
-    // Menu::create($validated);
+        session()->flash('successToast', "Menu '" . $this->name . "' was <span class='badge bg-label-success'>edited</span>");
+        $this->clear();
+        $this->dispatch('closeAllModals');
+    }
 
-    // session()->flash('successToast', "New menu '" . $this->name . "' successfully created");
-    // $this->clear();
-    // $this->addNewData = true;
-    // }
+    public function delete()
+    {
+        $id = $this->menuId;
+        $deletedMenu = Menu::find($id);
+        $deletedName = $deletedMenu->name;
+        Menu::find($id)->delete();
+        session()->flash('successToast', "Menu '" . $deletedName . "' was <span class='badge bg-label-danger'>Deleted</span>");
+        $this->clear();
+        $this->dispatch('closeAllModals');
+    }
 
+    public function delete_confirmation($id)
+    {
+        $this->menuId = $id;
+        $this->deletingName = Menu::find($id)->name;
+    }
 
     public function clear()
     {
         $this->name = null;
+        $this->menuId = null;
         $this->category_id = null;;
         $this->description = null;;
         $this->price = null;
         $this->stock = null;
         $this->image = null;
+        $this->updateData = false;
     }
 }

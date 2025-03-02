@@ -16,4 +16,8 @@ class AdminController extends Controller
     {
         return view('admin.menus');
     }
+    public function tables()
+    {
+        return view('admin.tables');
+    }
 }
