@@ -1,5 +1,5 @@
 <div>
-    {{-- <x-admin.toast /> --}}
+    <x-admin.toast />
     <div class="d-flex gap-3 justify-content-between mb-3">
         <input type="text" class="form-control" id="" style="max-width: 350px" placeholder="Search for menus?"
             wire:model.live="keyword">

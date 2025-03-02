@@ -73,7 +73,7 @@ class AdminMenu extends Component
             'stock' => $this->stock,
         ]);
 
-        session()->flash('message', 'Menu berhasil ditambahkan.');
+        session()->flash('successToast', "New Menu '" . $this->name . "' was successfully created");
         $this->reset(); // Reset input setelah submit
         // $this->dispatchBrowserEvent('close-modal'); // Event untuk menutup modal
         $this->dispatch('closeAllModals');
