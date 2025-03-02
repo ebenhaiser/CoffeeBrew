@@ -115,7 +115,7 @@ class AdminMenu extends Component
 
     public function delete()
     {
-        if (count($this->data_selected_id) == 1) {
+        if (count($this->data_selected_id) == 1 || $this->menuId != '') {
             $id = $this->menuId;
             $deletedMenu = Menu::find($id);
             $deletedName = $deletedMenu->name;
