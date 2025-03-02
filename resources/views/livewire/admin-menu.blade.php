@@ -62,7 +62,8 @@
                         <td>{{ $menu->name }}</td>
                         <td>{{ $menu->category_id ? $menu->category->name : 'uncategorized' }}</td>
                         <td>{{ $menu->description }}</td>
-                        <td>{{ 'Rp.' . $menu->price }}</td>
+                        <td>{{ 'Rp. ' . number_format($menu->price, 2, ',', ',') }}
+                        </td>
                         <td>{{ $menu->stock }}</td>
                         <td align="right">
                             <a wire:click="edit({{ $menu->id }})" class="btn btn-sm btn-warning"
