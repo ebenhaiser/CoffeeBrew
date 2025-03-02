@@ -1,5 +1,5 @@
 <div>
-    <x-admin.toast />
+    {{-- <x-admin.toast /> --}}
     <div class="d-flex gap-3 justify-content-between mb-3">
         <input type="text" class="form-control" id="" style="max-width: 350px" placeholder="Search for menus?"
             wire:model.live="keyword">
@@ -54,8 +54,9 @@
         </div>
     </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="addMenu" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!-- Modal add data-->
+    <div class="modal fade" id="addMenu" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+        data-bs-backdrop="static" wire:ignore.self>
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -68,6 +69,12 @@
                             <label class="form-label">Name</label>
                             <input type="text" class="form-control" id="name" name="name"
                                 placeholder="Insert menu name" wire:model="name" required>
+                            @if ($errors->has('name'))
+                                <div id="defaultFormControlHelp" class="form-text text-danger">
+                                    {{ $errors->first('name') }}
+                                </div>
+                            @endif
+
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">category</label>
@@ -90,6 +97,11 @@
                                 <input type="text" class="form-control" placeholder="Insert menu price"
                                     aria-label="" aria-describedby="basic-addon11" wire:model="price">
                             </div>
+                            @if ($errors->has('price'))
+                                <div id="defaultFormControlHelp" class="form-text text-danger">
+                                    {{ $errors->first('price') }}
+                                </div>
+                            @endif
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Stock</label>
