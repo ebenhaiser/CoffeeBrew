@@ -3,6 +3,7 @@
 namespace App\Livewire\Customer;
 
 use App\Models\Menu;
+use App\Models\Table;
 use Livewire\Component;
 
 class Order extends Component
@@ -10,7 +11,18 @@ class Order extends Component
     public $total_price = 0;
     public $itemQuantity = []; // Deklarasi array untuk menyimpan jumlah item
     public $keyword = null; // Deklarasi keyword untuk pencarian
+    public $slug, $table_number = '···';
 
+    public function mount($slug)
+    {
+        $this->slug = $slug;
+        $table = Table::where('qr_code', $slug)->first();
+        if ($table) {
+            $this->table_number = $table->table_number;
+        } else {
+            $this->table_number = 'N/A';
+        }
+    }
     public function calculateTotalPrice()
     {
         $this->total_price = 0;
@@ -50,5 +62,27 @@ class Order extends Component
         }
 
         return view('livewire.customer.order', compact('items'));
+    }
+
+    public function getOrderedItems()
+    {
+        $orderedItems = [];
+
+        foreach ($this->itemQuantity as $menuId => $quantity) {
+            if ($quantity > 0) {
+                $menu = Menu::find($menuId);
+                if ($menu) {
+                    $orderedItems[] = [
+                        'name' => $menu->name,
+                        'image' => $menu->image,
+                        'price' => $menu->price,
+                        'quantity' => $quantity,
+                        'subtotal' => $menu->price * $quantity,
+                    ];
+                }
+            }
+        }
+
+        return $orderedItems;
     }
 }

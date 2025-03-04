@@ -1,11 +1,12 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CustomerController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/order', function () {
-    return view('order');
-});
+
+Route::get('/order', [CustomerController::class, 'orderWithoutSlug'])->name('customer.order.default'); //for development
+Route::get('/order/{slug}', [CustomerController::class, 'order'])->name('customer.order');
 Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
 Route::get('/admin/menu', [AdminController::class, 'menus'])->name('admin.menu');
 Route::get('/admin/table', [AdminController::class, 'tables'])->name('admin.table');
