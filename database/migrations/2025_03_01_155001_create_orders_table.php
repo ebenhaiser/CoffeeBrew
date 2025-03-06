@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->string('order_code')->unique();
             $table->foreignId('table_id')->nullable()->constrained('tables')->onDelete('set null');
             $table->decimal('total_price')->nullable();
             $table->tinyInteger('status')->default(0); // 0 = pending, 1 = completed; -1 = canceled

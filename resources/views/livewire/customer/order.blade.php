@@ -75,7 +75,8 @@
                 <h6>{{ 'Rp. ' . number_format($total_price, 2, ',', ',') }}</h6>
             </div>
             <div class="my-auto">
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#orderDetail"
+                <button wire:click="getOrderedItems()" class="btn btn-primary" data-bs-toggle="modal"
+                    data-bs-target="#orderDetail"
                     {{ !empty($itemQuantity) && array_sum($itemQuantity) > 0 ? '' : 'disabled' }}>
                     <i class='bx bx-shopping-bag'></i>
                 </button>
@@ -99,7 +100,7 @@
                 </div>
                 <div class="modal-body">
                     <div style="margin-bottom: 100px">
-                        @foreach ($this->getOrderedItems() as $order)
+                        @foreach ($orderedItems as $order)
                             <div class="card mb-2 shadow-sm">
                                 <div class="card-header">
                                     <h6>
@@ -135,9 +136,10 @@
                             <h6>{{ 'Rp. ' . number_format($total_price, 2, ',', ',') }}</h6>
                         </div>
                         <div class="my-auto">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
-                                    class='bx bx-arrow-back'></i></button>
-                            <button type="button" class="btn btn-primary">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class='bx bx-arrow-back'></i>
+                            </button>
+                            <button type="button" class="btn btn-primary" wire:click="createOrder()">
                                 <i class='bx bx-shopping-bag'></i>
                             </button>
                         </div>

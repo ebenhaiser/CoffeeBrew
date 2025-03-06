@@ -3,23 +3,29 @@
 namespace App\Livewire\Customer;
 
 use App\Models\Menu;
+use App\Models\Order as ModelsOrder;
+use App\Models\OrderItem;
 use App\Models\Table;
 use Livewire\Component;
 
 class Order extends Component
 {
     public $total_price = 0;
+    public $table_id;
     public $itemQuantity = []; // Deklarasi array untuk menyimpan jumlah item
     public $keyword = null; // Deklarasi keyword untuk pencarian
     public $slug, $table_number = '···';
+    public $orderedItems = [];
 
     public function mount($slug)
     {
         $this->slug = $slug;
         $table = Table::where('qr_code', $slug)->first();
         if ($table) {
+            $this->table_id = $table->id;
             $this->table_number = $table->table_number;
         } else {
+            $this->table_id = null;
             $this->table_number = 'N/A';
         }
     }
@@ -66,13 +72,13 @@ class Order extends Component
 
     public function getOrderedItems()
     {
-        $orderedItems = [];
-
+        $this->orderedItems = [];
         foreach ($this->itemQuantity as $menuId => $quantity) {
             if ($quantity > 0) {
                 $menu = Menu::find($menuId);
                 if ($menu) {
-                    $orderedItems[] = [
+                    $this->orderedItems[] = [
+                        'id' => $menu->id,
                         'name' => $menu->name,
                         'image' => $menu->image,
                         'price' => $menu->price,
@@ -82,7 +88,24 @@ class Order extends Component
                 }
             }
         }
+    }
 
-        return $orderedItems;
+    public function createOrder()
+    {
+        $createOrder = ModelsOrder::create([
+            'order_code' => 'ORDER-' . time(),
+            'table_id' => $this->table_id,
+            'total_price' => $this->total_price,
+            'status' => 0,
+        ]);
+        $orderId = $createOrder->id;
+        foreach ($this->orderedItems as $item) {
+            OrderItem::create([
+                'order_id' => $orderId,
+                'menu_id' => $item['id'],
+                'quantity' => $item['quantity'],
+                'subtotal_price' => $item['subtotal'],
+            ]);
+        }
     }
 }

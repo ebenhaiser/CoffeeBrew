@@ -174,10 +174,17 @@ class Menu extends Component
             $id = $this->menuId;
             $deletedMenu = ModelsMenu::find($id);
             $deletedName = $deletedMenu->name;
+            if ($deletedMenu->image && Storage::disk('public')->exists($deletedMenu->image)) {
+                Storage::disk('public')->delete($deletedMenu->image);
+            }
             ModelsMenu::find($id)->delete();
             session()->flash('successToast', "Menu '" . $deletedName . "' was <span class='badge bg-label-danger'>Deleted</span>");
         } elseif (count($this->data_selected_id) >= 2) {
             foreach ($this->data_selected_id as $id) {
+                $deletedMenu = ModelsMenu::find($id);
+                if ($deletedMenu->image && Storage::disk('public')->exists($deletedMenu->image)) {
+                    Storage::disk('public')->delete($deletedMenu->image);
+                }
                 ModelsMenu::find($id)->delete();
             }
             session()->flash('successToast', "'" . count($this->data_selected_id) . "' Menus were <span class='badge bg-label-danger'>Deleted</span>");
