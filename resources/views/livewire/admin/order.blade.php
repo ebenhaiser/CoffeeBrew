@@ -2,7 +2,7 @@
     <x-admin.toast />
     <div class="row">
         <div class="col-md-6 mb-3">
-            <input type="text" class="form-control" id="" placeholder="Search for menus?"
+            <input type="text" class="form-control" id="" placeholder="Search for order?"
                 wire:model.live="keyword">
         </div>
         <div class="col-md-6 mb-3" align="right">
@@ -36,15 +36,22 @@
                     @else
                         <th>#</th>
                     @endif
-                    <th class="sort {{ $sortColumn == 'table_number' ? $sortDirection : '' }}"
-                        wire:click="sort('table_number')">
-                        Table Number
+                    <th class="sort {{ $sortColumn == 'order_code' ? $sortDirection : '' }}"
+                        wire:click="sort('order_code')">
+                        Code
                     </th>
-                    <th>
-                        QR Code
+                    <th class="sort {{ $sortColumn == 'table_id' ? $sortDirection : '' }}"
+                        wire:click="sort('table_id')">
+                        Table
                     </th>
-
-                    <th class="text-center">Actions</th>
+                    <th class="sort {{ $sortColumn == 'status' ? $sortDirection : '' }}" wire:click="sort('status')">
+                        Status
+                    </th>
+                    <th colspan="2" class="sort {{ $sortColumn == 'created_at' ? $sortDirection : '' }}"
+                        wire:click="sort('created_at')">
+                        Date
+                    </th>
+                    <th class="text-center">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -59,13 +66,36 @@
                         @else
                             <td>{{ $items->firstItem() + $key }}</td>
                         @endif
-                        <td>{{ $item->table_number }}</td>
-                        <td>{{ $item->qr_code }}</td>
+                        <td>{{ $item->order_code }}</td>
                         <td align="center">
-                            <a wire:click="edit({{ $item->id }})" class="btn btn-sm btn-warning"
-                                data-bs-toggle="modal" data-bs-target="#addData" style="color: white">
-                                <i class='bx bx-edit'></i>
-                            </a>
+                            @if ($item->table)
+                                {{ $item->table->table_number }}
+                            @else
+                                <span class="badge rounded-pill bg-label-warning">unknown</span>
+                            @endif
+                        </td>
+                        <td align="center">
+                            {!! match ($item->status) {
+                                0 => '<span class="badge rounded-pill bg-label-warning">pending</span>',
+                                1 => '<span class="badge rounded-pill bg-label-success">completed</span>',
+                                -1 => '<span class="badge rounded-pill bg-label-danger">cancelled</span>',
+                                default => 'pending',
+                            } !!}
+                        </td>
+                        <td align="center">{{ $item->created_at->format('d M Y') }}</td>
+                        <td align="center">{{ $item->created_at->format('H:i') }}</td>
+                        <td align="center">
+                            @if ($item->status == 0)
+                                <a wire:click="edit({{ $item->id }})" class="btn btn-sm btn-warning"
+                                    data-bs-toggle="modal" data-bs-target="#addData" style="color: white">
+                                    <i class='bx bx-edit'></i>
+                                </a>
+                            @else
+                                <a wire:click="edit({{ $item->id }})" class="btn btn-sm btn-success"
+                                    data-bs-toggle="modal" data-bs-target="#viewData" style="color: white">
+                                    <i class='bx bx-show'></i>
+                                </a>
+                            @endif
                             @if ($bulkDelete == false)
                                 <a wire:click="delete_confirmation({{ $item->id }})" class="btn btn-sm btn-danger"
                                     style="color: white" data-bs-toggle="modal" data-bs-target="#deleteData">
@@ -83,7 +113,7 @@
     </div>
 
     <!-- Modal add data-->
-    <div class="modal fade" id="addData" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+    {{-- <div class="modal fade" id="addData" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
         data-bs-backdrop="static" wire:ignore.self>
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -138,10 +168,10 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     {{-- modal delete data --}}
-    <div class="modal fade" id="deleteData" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+    {{-- <div class="modal fade" id="deleteData" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
         data-bs-backdrop="static" wire:ignore.self>
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -165,5 +195,5 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 </div>

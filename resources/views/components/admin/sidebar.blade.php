@@ -43,6 +43,13 @@
             </a>
         </li>
 
+        <li class="menu-item {{ request()->routeIs('admin.order') ? 'active' : '' }}">
+            <a href="{{ route('admin.order') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-calendar-alt"></i>
+                <div data-i18n="Analytics">Order</div>
+            </a>
+        </li>
+
         {{-- <li class="menu-header small text-uppercase">
             <span class="menu-header-text">Pages</span>
         </li> --}}

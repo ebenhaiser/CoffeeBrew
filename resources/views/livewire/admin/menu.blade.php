@@ -38,19 +38,19 @@
                     @endif
                     <th class="sort {{ $sortColumn == 'name' ? $sortDirection : '' }}" wire:click="sort('name')">Name
                     </th>
-                    <th class="sort {{ $sortColumn == 'category_id' ? $sortDirection : '' }}"
+                    <th class="sort {{ $sortColumn == 'category_id' ? $sortDirection : '' }} text-center"
                         wire:click="sort('category_id')">
                         Category</th>
                     <th class="sort {{ $sortColumn == 'description' ? $sortDirection : '' }}"
                         wire:click="sort('description')">
                         Description
                     </th>
-                    <th>Image</th>
+                    <th class="text-center">Image</th>
                     <th class="sort {{ $sortColumn == 'price' ? $sortDirection : '' }}" wire:click="sort('price')">Price
                     </th>
                     <th class="sort {{ $sortColumn == 'stock' ? $sortDirection : '' }}" wire:click="sort('stock')">Stock
                     </th>
-                    <th>Actions</th>
+                    <th class="text-center">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -66,7 +66,13 @@
                             <td>{{ $menus->firstItem() + $key }}</td>
                         @endif
                         <td>{{ $menu->name }}</td>
-                        <td>{{ $menu->category_id ? $menu->category->name : 'uncategorized' }}</td>
+                        <td align="center">
+                            @if ($menu->category_id)
+                                {{ $menu->category->name }}
+                            @else
+                                <span class="badge rounded-pill bg-label-warning">Uncategorized</span>
+                            @endif
+                        </td>
                         <td>{{ Str::limit($menu->description, 50) }}</td>
                         <td align="center">
                             @if ($menu->image && Storage::disk('public')->exists($menu->image))
