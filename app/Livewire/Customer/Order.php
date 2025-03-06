@@ -13,9 +13,10 @@ class Order extends Component
     public $total_price = 0;
     public $table_id;
     public $itemQuantity = []; // Deklarasi array untuk menyimpan jumlah item
+    public $orderedItems = [];
     public $keyword = null; // Deklarasi keyword untuk pencarian
     public $slug, $table_number = '···';
-    public $orderedItems = [];
+    public $order_code;
 
     public function mount($slug)
     {
@@ -92,20 +93,30 @@ class Order extends Component
 
     public function createOrder()
     {
+        $this->order_code = 'ORDCB-' . $this->table_number . '-' . time();
         $createOrder = ModelsOrder::create([
-            'order_code' => 'ORDER-' . time(),
+            'order_code' => $this->order_code,
             'table_id' => $this->table_id,
             'total_price' => $this->total_price,
             'status' => 0,
         ]);
-        $orderId = $createOrder->id;
+        $order_id = $createOrder->id;
         foreach ($this->orderedItems as $item) {
             OrderItem::create([
-                'order_id' => $orderId,
+                'order_id' => $order_id,
                 'menu_id' => $item['id'],
                 'quantity' => $item['quantity'],
                 'subtotal_price' => $item['subtotal'],
             ]);
         }
+    }
+
+    public function clear()
+    {
+        $this->itemQuantity = [];
+        $this->total_price = 0;
+        $this->keyword = null;
+        $this->orderedItems = [];
+        $this->order_code = null;
     }
 }

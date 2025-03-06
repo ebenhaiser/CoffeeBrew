@@ -10,7 +10,7 @@ class Table extends Model
     protected $fillable = ['table_number', 'qr_code'];
     protected $with = ['order'];
 
-    public function order()
+    public function order(): HasMany
     {
         return $this->hasMany(Order::class);
     }
