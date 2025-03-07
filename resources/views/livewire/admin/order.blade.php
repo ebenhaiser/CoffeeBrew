@@ -2,8 +2,7 @@
     <x-admin.toast />
     <div class="row">
         <div class="col-md-6 mb-3">
-            <input type="text" class="form-control" id="" placeholder="Search for order?"
-                wire:model.live="keyword">
+            <input type="text" class="form-control" id="" placeholder="Search..." wire:model.live="keyword">
         </div>
         <div class="col-md-6 mb-3" align="right">
             <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addData">
@@ -92,7 +91,7 @@
                                 </a>
                             @else
                                 <a wire:click="edit({{ $item->id }})" class="btn btn-sm btn-success"
-                                    data-bs-toggle="modal" data-bs-target="#viewData" style="color: white">
+                                    data-bs-toggle="modal" data-bs-target="#addData" style="color: white">
                                     <i class='bx bx-show'></i>
                                 </a>
                             @endif
@@ -113,65 +112,146 @@
     </div>
 
     <!-- Modal add data-->
-    {{-- <div class="modal fade" id="addData" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+    <div class="modal fade" id="addData" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
         data-bs-backdrop="static" wire:ignore.self>
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    @if ($updateData == false)
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Table</h1>
+                    @if ($editData == false)
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Order</h1>
                     @else
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Table Number '{{ $table_number }}'
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Order '{{ $order_code }}'
                         </h1>
                     @endif
                     <button type="button" class="btn-close" data-bs-dismiss="modal" wire:click="clear()"
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Table Number</label>
+                    {{-- order detail --}}
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Order_Code</label>
                             <input type="text" class="form-control" placeholder="Insert table number"
-                                wire:model="table_number" required>
-                            @if ($errors->has('table_number'))
+                                wire:model="order_code" readonly>
+                            @if ($errors->has('order_code'))
                                 <div id="defaultFormControlHelp" class="form-text text-danger">
-                                    {{ $errors->first('table_number') }}
+                                    {{ $errors->first('order_code') }}
                                 </div>
                             @endif
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">QR Code</label>
-                            <input type="text" class="form-control" placeholder="Insert QR Code" wire:model="qr_code"
-                                required {{ $updateData == true ? 'readonly' : '' }}>
-                            @if ($updateData == false)
-                                @if ($errors->has('qr_code'))
-                                    <div id="defaultFormControlHelp" class="form-text text-danger">
-                                        {{ $errors->first('qr_code') }}
-                                    </div>
-                                @else
-                                    <div id="defaultFormControlHelp" class="form-text text-warning">
-                                        Cannot be changed
-                                    </div>
-                                @endif
+                        <div class="col-md-4">
+                            <label class="form-label">Table Number</label>
+                            <select class="form-control" id="" wire:model="table_id"
+                                {{ $status == 1 || $status == -1 ? 'disabled' : '' }}>
+                                <option value="">-- Select Table --</option>
+                                @foreach ($tables as $table)
+                                    <option value="{{ $table->id }}">{{ $table->table_number }}</option>
+                                @endforeach
+                            </select>
+                            @if ($errors->has('table_id'))
+                                <div id="defaultFormControlHelp" class="form-text text-danger">
+                                    {{ $errors->first('table_id') }}
+                                </div>
                             @endif
                         </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Status</label>
+                            <select class="form-control" id="" wire:model="status"
+                                {{ $status == 1 || $status == -1 ? 'disabled' : '' }}>
+                                <option value="0">Pending</option>
+                                <option value="1">Completed</option>
+                                <option value="-1">Cancelled</option>
+                            </select>
+                            @if ($errors->has('status'))
+                                <div id="defaultFormControlHelp" class="form-text text-danger">
+                                    {{ $errors->first('status') }}
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                    {{-- order items --}}
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Name</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            @if ($editData == true)
+                                <tbody>
+                                    @foreach ($orderItems as $item)
+                                        <tr>
+                                            <td>{!! $item->menu->category->name ?? '<i>Uncategorized</i>' !!}</td>
+                                            <td>{!! $item->menu->name ?? '<i>Deleted</i>' !!}</td>
+                                            <td> {{ 'Rp. ' . number_format($item->menu->price, 2, ',', ',') }}</td>
+                                            <td align="center">{{ $item->quantity }}</td>
+                                            <td> {{ 'Rp. ' . number_format($item->subtotal_price, 2, ',', ',') }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            @endif
+                            <tfoot>
+                                <tr>
+                                    <th colspan="4">Subtotal</th>
+                                    <td>
+                                        {{ 'Rp. ' . number_format($total_price, 2, ',', ',') }}
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="4">Amount Paid</th>
+                                    <td>
+                                        @if ($status == 1)
+                                            {{ 'Rp. ' . number_format($amount_paid, 2, ',', ',') }}
+                                        @else
+                                            <div class="input-group">
+                                                <span class="input-group-text" id="basic-addon11">Rp.</span>
+                                                <input type="text" class="form-control"
+                                                    placeholder="Insert amount pay" aria-label=""
+                                                    aria-describedby="basic-addon11" wire:model.live="amount_paid">
+                                            </div>
+                                            @if ($errors->has('amount_change'))
+                                                <div id="defaultFormControlHelp" class="form-text text-danger">
+                                                    {{ $errors->first('amount_change') }}
+                                                </div>
+                                            @endif
+                                        @endif
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="4">Amount Change</th>
+                                    <td>
+                                        {{ 'Rp. ' . number_format($amount_change, 2, ',', ',') }}
+
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                         wire:click="clear()">Cancel</button>
-                    @if ($updateData == false)
-                        <button type="button" class="btn btn-primary" wire:click="store()">Add</button>
+                    @if ($editData == true)
+                        @if ($status == 0)
+                            <button type="button" class="btn btn-primary" wire:click="update()">Edit</button>
+                        @elseif ($status == 1)
+                            <button type="button" class="btn btn-warning">Print</button>
+                        @endif
                     @else
-                        <button type="button" class="btn btn-primary" wire:click="update()">Edit</button>
+                        <button type="button" class="btn btn-primary" wire:click="store()">Add</button>
                     @endif
                 </div>
             </div>
         </div>
-    </div> --}}
+    </div>
 
     {{-- modal delete data --}}
-    {{-- <div class="modal fade" id="deleteData" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+    <div class="modal fade" id="deleteData" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
         data-bs-backdrop="static" wire:ignore.self>
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -195,5 +275,5 @@
                 </div>
             </div>
         </div>
-    </div> --}}
+    </div>
 </div>

@@ -38,14 +38,16 @@
 
         <li class="menu-item {{ request()->routeIs('admin.table') ? 'active' : '' }}">
             <a href="{{ route('admin.table') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-calendar-alt"></i>
+                <i class="menu-icon tf-icons">
+                    <img src="{{ asset('img/svg/table.svg') }}" alt="" width="20">
+                </i>
                 <div data-i18n="Analytics">Table</div>
             </a>
         </li>
 
         <li class="menu-item {{ request()->routeIs('admin.order') ? 'active' : '' }}">
             <a href="{{ route('admin.order') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-calendar-alt"></i>
+                <i class="menu-icon tf-icons bx bx-task"></i>
                 <div data-i18n="Analytics">Order</div>
             </a>
         </li>

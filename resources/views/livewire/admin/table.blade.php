@@ -2,8 +2,7 @@
     <x-admin.toast />
     <div class="row">
         <div class="col-md-6 mb-3">
-            <input type="text" class="form-control" id="" placeholder="Search for menus?"
-                wire:model.live="keyword">
+            <input type="text" class="form-control" id="" placeholder="Search..." wire:model.live="keyword">
         </div>
         <div class="col-md-6 mb-3" align="right">
             <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addData">
