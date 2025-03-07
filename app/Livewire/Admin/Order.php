@@ -133,4 +133,32 @@ class Order extends Component
         $this->clear();
         $this->dispatch('closeAllModals');
     }
+
+    public function delete()
+    {
+        if (count($this->data_selected_id) == 1 || $this->dataId != '') {
+            $id = $this->dataId;
+            $deletedData = ModelsOrder::find($id);
+            $deletedName = $deletedData->order_code;
+            ModelsOrder::find($id)->delete();
+            session()->flash('successToast', "Order '" . $deletedName . "' was <span class='badge bg-label-danger'>Deleted</span>");
+        } elseif (count($this->data_selected_id) >= 2) {
+            foreach ($this->data_selected_id as $id) {
+                ModelsOrder::find($id)->delete();
+            }
+            session()->flash('successToast', "'" . count($this->data_selected_id) . "' Orders were <span class='badge bg-label-danger'>Deleted</span>");
+        }
+        $this->clear();
+    }
+
+    public function delete_confirmation($id)
+    {
+        if ($id != '') {
+            $this->dataId = $id;
+            $this->deletingName = ModelsOrder::find($id)->order_code;
+        } elseif (count($this->data_selected_id) == 1) {
+            $this->dataId = $this->data_selected_id[0];
+            $this->deletingName = ModelsOrder::find($this->dataId)->order_code;
+        }
+    }
 }

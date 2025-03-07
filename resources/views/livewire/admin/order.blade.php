@@ -131,8 +131,7 @@
                     <div class="row mb-3">
                         <div class="col-md-4">
                             <label class="form-label">Order_Code</label>
-                            <input type="text" class="form-control" placeholder="Insert table number"
-                                wire:model="order_code" readonly>
+                            <input type="text" class="form-control" placeholder="" wire:model="order_code" readonly>
                             @if ($errors->has('order_code'))
                                 <div id="defaultFormControlHelp" class="form-text text-danger">
                                     {{ $errors->first('order_code') }}
@@ -169,7 +168,15 @@
                             @endif
                         </div>
                     </div>
+                    <hr />
                     {{-- order items --}}
+                    @if ($editData == false)
+                        <div class="d-flex justify-content-end mb-3">
+                            <button class="btn btn-outline-primary">
+                                <i class='bx bx-plus'></i>
+                            </button>
+                        </div>
+                    @endif
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered">
                             <thead>
@@ -215,9 +222,9 @@
                                                     aria-describedby="basic-addon11" wire:model.live="amount_paid"
                                                     {{ $status == -1 ? 'disabled' : '' }}>
                                             </div>
-                                            @if ($errors->has('amount_change'))
+                                            @if ($errors->has('amount_paid'))
                                                 <div id="defaultFormControlHelp" class="form-text text-danger">
-                                                    {{ $errors->first('amount_change') }}
+                                                    {{ $errors->first('amount_paid') }}
                                                 </div>
                                             @endif
                                         @endif
