@@ -212,7 +212,8 @@
                                                 <span class="input-group-text" id="basic-addon11">Rp.</span>
                                                 <input type="text" class="form-control"
                                                     placeholder="Insert amount pay" aria-label=""
-                                                    aria-describedby="basic-addon11" wire:model.live="amount_paid">
+                                                    aria-describedby="basic-addon11" wire:model.live="amount_paid"
+                                                    {{ $status == -1 ? 'disabled' : '' }}>
                                             </div>
                                             @if ($errors->has('amount_change'))
                                                 <div id="defaultFormControlHelp" class="form-text text-danger">
