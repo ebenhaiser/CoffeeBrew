@@ -75,8 +75,8 @@
                         </td>
                         <td align="center">
                             {!! match ($item->status) {
-                                0 => '<span class="badge rounded-pill bg-label-warning">pending</span>',
-                                1 => '<span class="badge rounded-pill bg-label-success">completed</span>',
+                                0 => '<span class="badge rounded-pill bg-label-warning">unpaid</span>',
+                                1 => '<span class="badge rounded-pill bg-label-success">paid</span>',
                                 -1 => '<span class="badge rounded-pill bg-label-danger">cancelled</span>',
                                 default => 'pending',
                             } !!}
@@ -161,18 +161,18 @@
                             @if ($editData == true)
                                 @if ($status == 1 || $status == -1)
                                     <select class="form-control" id="" wire:model="status" disabled>
-                                        <option value="1">Completed</option>
+                                        <option value="1">Paid</option>
                                         <option value="-1">Cancelled</option>
                                     </select>
                                 @else
                                     <select class="form-control" id="" wire:model="status">
-                                        <option value="0">Pending</option>
+                                        <option value="0">Unpaid</option>
                                         <option value="-1">Cancelled</option>
                                     </select>
                                 @endif
                             @else
                                 <select class="form-control" id="" wire:model="status" disabled>
-                                    <option value="0">Pending</option>
+                                    <option value="0">Unpaid</option>
                                 </select>
                             @endif
                             @if ($errors->has('status'))
@@ -186,7 +186,7 @@
                     {{-- order items --}}
                     @if ($editData == false)
                         <div class="d-flex justify-content-end mb-3">
-                            <button class="btn btn-outline-primary">
+                            <button class="btn btn-outline-primary" wire:click="addRow()">
                                 <i class='bx bx-plus'></i>
                             </button>
                         </div>
@@ -195,6 +195,9 @@
                         <table class="table table-striped table-bordered">
                             <thead>
                                 <tr>
+                                    @if ($editData == false && count($rows) > 0)
+                                        <th></th>
+                                    @endif
                                     <th>Category</th>
                                     <th>Name</th>
                                     <th>Price</th>
@@ -215,21 +218,67 @@
                                     @endforeach
                                 </tbody>
                             @else
-                                {{-- @foreach ($collection as $item)
-                                @endforeach --}}
+                                <tbody>
+                                    @foreach ($rows as $index => $row)
+                                        <tr>
+                                            <td>
+                                                <button wire:click="removeRow({{ $index }})"
+                                                    class="btn btn-sm btn-outline-danger">
+                                                    <i class='bx bx-trash-alt'></i>
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <select class="form-control"
+                                                    wire:model.live="rows.{{ $index }}.category_id">
+                                                    <option value="">-- Pilih Kategori --</option>
+                                                    @foreach ($menuCategories as $menuCategory)
+                                                        <option value="{{ $menuCategory->id }}">
+                                                            {{ $menuCategory->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select wire:model.live="rows.{{ $index }}.menu_id"
+                                                    class="form-control">
+                                                    <option value="">-- Pilih Menu --</option>
+                                                    @foreach ($this->getFilteredMenus($row['category_id']) as $menu)
+                                                        <option value="{{ $menu->id }}">{{ $menu->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                            <td>
+                                                {{ 'Rp. ' . number_format($rows[$index]['price'], 2, ',', ',') ?? 0 }}
+                                            </td>
+                                            <td>
+                                                <input type="number"
+                                                    wire:model.live="rows.{{ $index }}.quantity"
+                                                    class="form-control">
+                                            </td>
+                                            <td>
+                                                {{ 'Rp. ' . number_format($rows[$index]['subtotal_price'], 2, ',', ',') ?? 0 }}
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
                             @endif
                             <tfoot>
                                 <tr>
-                                    <th colspan="4">Subtotal</th>
+                                    <th colspan="{{ $editData == false && count($rows) > 0 ? '5' : '4' }}">
+                                        Total Price</th>
                                     <td>
-                                        {{ 'Rp. ' . number_format($total_price, 2, ',', ',') }}
-
+                                        @if ($editData == false)
+                                            {{ 'Rp. ' . ($total_price = number_format($this->getTotalPrice(), 2, ',', ',')) }}
+                                        @else
+                                            {{ 'Rp. ' . number_format($total_price, 2, ',', ',') }}
+                                        @endif
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th colspan="4">Amount Paid</th>
+                                    <th colspan="{{ $editData == false && count($rows) > 0 ? '5' : '4' }}">Amount Paid
+                                    </th>
                                     <td>
-                                        @if ($status == 1)
+                                        @if ($status == 1 || $status == -1)
                                             {{ 'Rp. ' . number_format($amount_paid, 2, ',', ',') }}
                                         @else
                                             <div class="input-group">
@@ -248,7 +297,8 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th colspan="4">Amount Change</th>
+                                    <th colspan="{{ $editData == false && count($rows) > 0 ? '5' : '4' }}">Amount
+                                        Change</th>
                                     <td>
                                         {{ 'Rp. ' . number_format($amount_change, 2, ',', ',') }}
 
@@ -268,7 +318,8 @@
                             <button type="button" class="btn btn-warning">Print</button>
                         @endif
                     @else
-                        <button type="button" class="btn btn-primary" wire:click="store()">Add</button>
+                        <button type="button" class="btn btn-primary" wire:click="store()"
+                            {{ count($rows) <= 0 ? 'disabled' : '' }}>Add</button>
                     @endif
                 </div>
             </div>

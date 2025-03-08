@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Admin;
 
+use App\Models\Category;
+use App\Models\Menu;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Validation\Rule;
@@ -20,6 +22,8 @@ class Order extends Component
     public $editData = false; //update data for edit data
     public $deletingName; //for getting name of deleted data
     public $bulkDelete = false, $data_selected_id = []; //for bulk delete
+    public $rows = [];
+    public $menus, $menuCategories;
 
     public function clear()
     {
@@ -37,6 +41,7 @@ class Order extends Component
         $this->deletingName = null;
         $this->bulkDelete = false;
         $this->data_selected_id = [];
+        $this->rows = [];
 
         // Hapus session flash message
         session()->forget('message');
@@ -56,6 +61,12 @@ class Order extends Component
         $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
     }
 
+    public function mount()
+    {
+        $this->menuCategories = Category::all();
+        $this->menus = Menu::all();
+    }
+
     public function render()
     {
         if ($this->keyword != null) {
@@ -72,11 +83,9 @@ class Order extends Component
 
         $tables = Table::get();
 
-        if ($this->editData == true) {
-            $this->amount_change = intval($this->amount_paid) - $this->total_price;
-            if ($this->amount_change < 0) {
-                $this->amount_change = 0;
-            }
+        $this->amount_change = intval($this->amount_paid) - $this->total_price;
+        if ($this->amount_change < 0) {
+            $this->amount_change = 0;
         }
 
         return view('livewire.admin.order', compact('items', 'tables'));
@@ -93,9 +102,120 @@ class Order extends Component
                     'amount_paid.gte' => 'Insufficient pay',
                 ]);
             }
+        } else {
+            if ($this->status == 1) {
+                $this->validate([
+                    'table_id' => 'required',
+                    'amount_paid' => 'required|numeric|gte:total_price', // amount_paid harus >= total_price
+                ], [
+                    'amount_paid.gte' => 'Insufficient pay',
+                ]);
+            } else {
+                $this->validate([
+                    'table_id' => 'required',
+                ]);
+            }
         }
     }
 
+    // add data
+    public function addRow()
+    {
+        $this->rows[] = [
+            'category_id' => '',
+            'menu_id' => '',
+            'price' => 0,
+            'quantity' => 1,
+            'subtotal_price' => 0
+        ];
+    }
+
+    public function removeRow($index)
+    {
+        unset($this->rows[$index]);
+        $this->rows = array_values($this->rows); // Reset index agar tidak ada index yang lompat
+    }
+
+
+    public function getFilteredMenus($categoryId)
+    {
+        return $categoryId ? Menu::where('category_id', $categoryId)->get() : collect();
+    }
+
+    public function updated($propertyName)
+    {
+        if (str_starts_with($propertyName, 'rows') && $this->editData == false) {
+            $parts = explode('.', $propertyName);
+            if (count($parts) == 3) {
+                $rowIndex = $parts[1];
+                $field = $parts[2];
+
+                // Jika menu_id berubah, update harga
+                if ($field === 'menu_id' && !empty($this->rows[$rowIndex]['menu_id'])) {
+                    $menu = Menu::find($this->rows[$rowIndex]['menu_id']);
+                    if ($menu) {
+                        $this->rows[$rowIndex]['price'] = $menu->price;
+                        $this->rows[$rowIndex]['subtotal_price'] = $menu->price * $this->rows[$rowIndex]['quantity'];
+                    }
+                }
+
+                // Jika quantity berubah, update subtotal
+                if ($field === 'quantity') {
+                    $this->rows[$rowIndex]['subtotal_price'] = intval($this->rows[$rowIndex]['price']) * intval($this->rows[$rowIndex]['quantity']);
+                }
+            }
+        }
+    }
+
+    public function getTotalPrice()
+    {
+        $this->total_price = 0;
+        foreach ($this->rows as $row) {
+            $this->total_price += $row['subtotal_price'];
+        }
+
+        return $this->total_price;
+    }
+
+
+    public function store()
+    {
+        if ($this->amount_paid = null || $this->amount_paid <= 0) {
+            $this->status = 0;
+        } else {
+            $this->status = 1;
+        }
+        $this->validateAdd();
+        $table = Table::find($this->table_id);
+        $this->order_code = 'ORDCB-' . $table->table_number . '-' . time();
+        $createOrder = ModelsOrder::create([
+            'order_code' => $this->order_code,
+            'table_id' => $this->table_id,
+            'status' => $this->status,
+            'total_price' => $this->total_price,
+            'amount_paid' => $this->amount_paid,
+            'amount_change' => $this->amount_change,
+        ]);
+
+        $order_id = $createOrder->id;
+
+        foreach ($this->rows as $row) {
+            OrderItem::create([
+                'order_id' => $order_id,
+                'menu_id' => $row['menu_id'],
+                'quantity' => $row['quantity'],
+                'subtotal_price' => $row['subtotal_price'],
+            ]);
+        }
+
+        session()->flash('successToast', "Order '" . $this->order_code . "' was <span class='badge bg-label-success'>created</span>");
+        $this->clear();
+        $this->dispatch('closeAllModals');
+    }
+    // END add data
+
+
+    // for edit/update data
     public function edit($id)
     {
         $data = ModelsOrder::with('items.menu.category')->find($id);
@@ -141,6 +261,7 @@ class Order extends Component
         $this->clear();
         $this->dispatch('closeAllModals');
     }
+    // END for edit/update data
 
     public function delete()
     {
