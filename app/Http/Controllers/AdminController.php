@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Models\Order;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class AdminController extends Controller
 {
@@ -29,5 +30,11 @@ class AdminController extends Controller
     public function orders()
     {
         return view('admin.orders');
+    }
+
+    public function printReceipt($slug)
+    {
+        $order = Order::with('items.menu', 'table')->where('order_code', $slug)->first();
+        return view('admin.receipt', compact('order'));
     }
 }

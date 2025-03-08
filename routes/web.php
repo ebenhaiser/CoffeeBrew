@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/order', [CustomerController::class, 'orderWithoutSlug'])->name('customer.order.default'); //for development
+Route::get('/receipt/{slug}', [AdminController::class, 'printReceipt'])->name('print.receipt');
 Route::get('/order/{slug}', [CustomerController::class, 'order'])->name('customer.order');
 Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
 Route::get('/admin/menu', [AdminController::class, 'menus'])->name('admin.menu');
