@@ -129,6 +129,7 @@
                 <div class="modal-body">
                     {{-- order detail --}}
                     <div class="row mb-3">
+                        {{-- order code --}}
                         <div class="col-md-4">
                             <label class="form-label">Order_Code</label>
                             <input type="text" class="form-control" placeholder="" wire:model="order_code" readonly>
@@ -138,6 +139,7 @@
                                 </div>
                             @endif
                         </div>
+                        {{-- table number --}}
                         <div class="col-md-4">
                             <label class="form-label">Table Number</label>
                             <select class="form-control" id="" wire:model="table_id"
@@ -153,14 +155,26 @@
                                 </div>
                             @endif
                         </div>
+                        {{-- status --}}
                         <div class="col-md-4">
                             <label class="form-label">Status</label>
-                            <select class="form-control" id="" wire:model="status"
-                                {{ $status == 1 || $status == -1 ? 'disabled' : '' }}>
-                                <option value="0">Pending</option>
-                                <option value="1">Completed</option>
-                                <option value="-1">Cancelled</option>
-                            </select>
+                            @if ($editData == true)
+                                @if ($status == 1 || $status == -1)
+                                    <select class="form-control" id="" wire:model="status" disabled>
+                                        <option value="1">Completed</option>
+                                        <option value="-1">Cancelled</option>
+                                    </select>
+                                @else
+                                    <select class="form-control" id="" wire:model="status">
+                                        <option value="0">Pending</option>
+                                        <option value="-1">Cancelled</option>
+                                    </select>
+                                @endif
+                            @else
+                                <select class="form-control" id="" wire:model="status" disabled>
+                                    <option value="0">Pending</option>
+                                </select>
+                            @endif
                             @if ($errors->has('status'))
                                 <div id="defaultFormControlHelp" class="form-text text-danger">
                                     {{ $errors->first('status') }}
@@ -200,6 +214,9 @@
                                         </tr>
                                     @endforeach
                                 </tbody>
+                            @else
+                                {{-- @foreach ($collection as $item)
+                                @endforeach --}}
                             @endif
                             <tfoot>
                                 <tr>

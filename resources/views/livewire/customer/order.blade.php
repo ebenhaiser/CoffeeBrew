@@ -1,4 +1,6 @@
 <div class="order-container">
+    <x-slot:title>Order Table: {{ $table_number }}</x-slot:title>
+
     <div>
         <div class="header">
             <div class="d-flex justify-content-between">

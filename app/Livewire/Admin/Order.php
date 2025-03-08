@@ -118,17 +118,25 @@ class Order extends Component
         $this->validateAdd(); // Memastikan validasi terjadi sebelum menyimpan
 
         $data = ModelsOrder::findOrFail($this->dataId);
-        if ($this->status == 0) {
-            $status = 1;
-        } else {
-            $status = $this->status;
+        // if ($this->status == 0) {
+        //     $status = 1;
+        // } else {
+        //     $status = $this->status;
+        // }
+
+        if ($this->status == -1) {
+            $data->update([
+                'table_id' => $this->table_id,
+                'status' => -1,
+            ]);
+        } elseif ($this->status == 0) {
+            $data->update([
+                'table_id' => $this->table_id,
+                'status' => 1,
+                'amount_paid' => $this->amount_paid,
+                'amount_change' => $this->amount_change,
+            ]);
         }
-        $data->update([
-            'table_id' => $this->table_id,
-            'status' => $status,
-            'amount_paid' => $this->amount_paid,
-            'amount_change' => $this->amount_change,
-        ]);
         session()->flash('successToast', "Order '" . $this->order_code . "' was <span class='badge bg-label-success'>edited</span>");
         $this->clear();
         $this->dispatch('closeAllModals');
