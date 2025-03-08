@@ -83,7 +83,7 @@
 
                         </td>
                         <td>
-                            {{ 'Rp. ' . number_format($menu->price, 2, ',', ',') }}
+                            {{ 'Rp. ' . number_format($menu->price, 2, '.', ',') }}
                         </td>
                         <td>{{ $menu->stock }}</td>
                         <td align="center">

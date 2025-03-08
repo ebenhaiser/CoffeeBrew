@@ -38,7 +38,7 @@
                                                 <div class="col-sm-7">
                                                     <div class="menu-content">
                                                         <h6>{{ $item->name }}</h6>
-                                                        <p>{{ 'Rp. ' . number_format($item->price, 2, ',', '.') }}</p>
+                                                        <p>{{ 'Rp. ' . number_format($item->price, 2, '.', ',') }}</p>
                                                         <div
                                                             class="d-flex justify-content-between align-items-center ms-auto me-3">
                                                             <button class="btn btn-sm btn-primary"
@@ -75,7 +75,7 @@
             <div class="price-content d-flex justify-content-between">
                 <div class="price">
                     <h7>Total Price</h7>
-                    <h6>{{ 'Rp. ' . number_format($total_price, 2, ',', ',') }}</h6>
+                    <h6>{{ 'Rp. ' . number_format($total_price, 2, '.', ',') }}</h6>
                 </div>
                 <div class="my-auto">
                     <button wire:click="getOrderedItems()" class="btn btn-primary" data-bs-toggle="modal"
@@ -116,7 +116,7 @@
                                             style="max-width: 50px; aspect-ratio: 1 / 1; object-fit:cover">
                                         <div>
                                             <div>Price: <span
-                                                    class="text-secondary">{{ 'Rp. ' . number_format($order['price'], 2, ',', ',') }}</span>
+                                                    class="text-secondary">{{ 'Rp. ' . number_format($order['price'], 2, '.', ',') }}</span>
                                             </div>
                                             <div>Quantity: <span class="text-secondary">{{ $order['quantity'] }}</span>
                                             </div>
@@ -125,7 +125,7 @@
                                 </div>
                                 <div class="card-footer" align="right">
                                     <span style="font-weight: 500">Subtotal:
-                                    </span><span>{{ 'Rp. ' . number_format($order['subtotal'], 2, ',', ',') }}</span>
+                                    </span><span>{{ 'Rp. ' . number_format($order['subtotal'], 2, '.', ',') }}</span>
                                 </div>
                             </div>
                         @endforeach
@@ -135,7 +135,7 @@
                     <div class="price-content d-flex justify-content-between">
                         <div class="price">
                             <h7>Total Price</h7>
-                            <h6>{{ 'Rp. ' . number_format($total_price, 2, ',', ',') }}</h6>
+                            <h6>{{ 'Rp. ' . number_format($total_price, 2, '.', ',') }}</h6>
                         </div>
                         <div class="my-auto">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">

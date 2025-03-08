@@ -8,7 +8,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            width: 300px;
+            width: 310px;
             margin: auto;
             padding: 10px;
             border: 1px solid #000;
@@ -66,17 +66,17 @@
                 <tr>
                     <td>{{ $item->menu->name }}</td>
                     <td>{{ $item->quantity . 'X' }}</td>
-                    <td>{{ 'Rp.' . number_format($item->subtotal_price, 2, '.', ',') }}</td>
+                    <td>{{ 'Rp. ' . number_format($item->subtotal_price, 2, '.', ',') }}</td>
                 </tr>
             @endforeach
         </tbody>
     </table>
     <div class="center">------------------------------------</div>
     <div class="bold">Total: <span
-            id="total_price">{{ 'Rp.' . number_format($order->total_price, 2, '.', ',') }}</span></div>
-    <div>Amount Paid: <span id="amount_paid">{{ 'Rp.' . number_format($order->amount_paid, 2, '.', ',') }}</span>
+            id="total_price">{{ 'Rp. ' . number_format($order->total_price, 2, '.', ',') }}</span></div>
+    <div>Amount Paid: <span id="amount_paid">{{ 'Rp. ' . number_format($order->amount_paid, 2, '.', ',') }}</span>
     </div>
-    <div>Change: <span id="amount_change">{{ 'Rp.' . number_format($order->amount_change, 2, '.', ',') }}</span></div>
+    <div>Change: <span id="amount_change">{{ 'Rp. ' . number_format($order->amount_change, 2, '.', ',') }}</span></div>
     <div class="center">------------------------------------</div>
     <div class="center">Thank you for your visit!</div>
     <div class="no-print">

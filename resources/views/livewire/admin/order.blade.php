@@ -211,9 +211,9 @@
                                         <tr>
                                             <td>{!! $item->menu->category->name ?? '<i>Uncategorized</i>' !!}</td>
                                             <td>{!! $item->menu->name ?? '<i>Deleted</i>' !!}</td>
-                                            <td> {{ 'Rp. ' . number_format($item->menu->price, 2, ',', ',') }}</td>
+                                            <td> {{ 'Rp. ' . number_format($item->menu->price, 2, '.', ',') }}</td>
                                             <td align="center">{{ $item->quantity }}</td>
-                                            <td> {{ 'Rp. ' . number_format($item->subtotal_price, 2, ',', ',') }}</td>
+                                            <td> {{ 'Rp. ' . number_format($item->subtotal_price, 2, '.', ',') }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -248,7 +248,7 @@
                                                 </select>
                                             </td>
                                             <td>
-                                                {{ 'Rp. ' . number_format($rows[$index]['price'], 2, ',', ',') ?? 0 }}
+                                                {{ 'Rp. ' . number_format($rows[$index]['price'], 2, '.', ',') ?? 0 }}
                                             </td>
                                             <td>
                                                 <input type="number"
@@ -256,7 +256,7 @@
                                                     class="form-control">
                                             </td>
                                             <td>
-                                                {{ 'Rp. ' . number_format($rows[$index]['subtotal_price'], 2, ',', ',') ?? 0 }}
+                                                {{ 'Rp. ' . number_format($rows[$index]['subtotal_price'], 2, '.', ',') ?? 0 }}
                                             </td>
                                         </tr>
                                     @endforeach
@@ -268,9 +268,9 @@
                                         Total Price</th>
                                     <td>
                                         @if ($editData == false)
-                                            {{ 'Rp. ' . ($total_price = number_format($this->getTotalPrice(), 2, ',', ',')) }}
+                                            {{ 'Rp. ' . ($total_price = number_format($this->getTotalPrice(), 2, '.', ',')) }}
                                         @else
-                                            {{ 'Rp. ' . number_format($total_price, 2, ',', ',') }}
+                                            {{ 'Rp. ' . number_format($total_price, 2, '.', ',') }}
                                         @endif
                                     </td>
                                 </tr>
@@ -279,7 +279,7 @@
                                     </th>
                                     <td>
                                         @if ($status == 1 || $status == -1)
-                                            {{ 'Rp. ' . number_format($amount_paid, 2, ',', ',') }}
+                                            {{ 'Rp. ' . number_format($amount_paid, 2, '.', ',') }}
                                         @else
                                             <div class="input-group">
                                                 <span class="input-group-text" id="basic-addon11">Rp.</span>
@@ -300,7 +300,7 @@
                                     <th colspan="{{ $editData == false && count($rows) > 0 ? '5' : '4' }}">Amount
                                         Change</th>
                                     <td>
-                                        {{ 'Rp. ' . number_format($amount_change, 2, ',', ',') }}
+                                        {{ 'Rp. ' . number_format($amount_change, 2, '.', ',') }}
 
                                     </td>
                                 </tr>
@@ -315,7 +315,8 @@
                         @if ($status == 0)
                             <button type="button" class="btn btn-primary" wire:click="update()">Edit</button>
                         @elseif ($status == 1)
-                            <button type="button" class="btn btn-warning">Print</button>
+                            <a href="{{ route('print.receipt', $order_code) }}" target="_blank" type="button"
+                                class="btn btn-warning">Print</a>
                         @endif
                     @else
                         <button type="button" class="btn btn-primary" wire:click="store()"
