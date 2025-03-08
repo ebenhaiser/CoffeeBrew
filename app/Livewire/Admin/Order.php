@@ -103,16 +103,16 @@ class Order extends Component
                 ]);
             }
         } else {
-            if ($this->status == 1) {
+            if ($this->amount_paid == null || $this->amount_paid <= 0) {
+                $this->validate([
+                    'table_id' => 'required',
+                ]);
+            } else {
                 $this->validate([
                     'table_id' => 'required',
                     'amount_paid' => 'required|numeric|gte:total_price', // amount_paid harus >= total_price
                 ], [
                     'amount_paid.gte' => 'Insufficient pay',
-                ]);
-            } else {
-                $this->validate([
-                    'table_id' => 'required',
                 ]);
             }
         }
@@ -180,18 +180,20 @@ class Order extends Component
 
     public function store()
     {
-        if ($this->amount_paid = null || $this->amount_paid <= 0) {
-            $this->status = 0;
-        } else {
-            $this->status = 1;
-        }
         $this->validateAdd();
+
+        $orderStatus = 0;
+        if ($this->amount_paid == null || $this->amount_paid <= 0) {
+            $orderStatus = 0;
+        } else {
+            $orderStatus = 1;
+        }
         $table = Table::find($this->table_id);
         $this->order_code = 'ORDCB-' . $table->table_number . '-' . time();
         $createOrder = ModelsOrder::create([
             'order_code' => $this->order_code,
             'table_id' => $this->table_id,
-            'status' => $this->status,
+            'status' => $orderStatus,
             'total_price' => $this->total_price,
             'amount_paid' => $this->amount_paid,
             'amount_change' => $this->amount_change,
